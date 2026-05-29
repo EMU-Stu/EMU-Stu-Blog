@@ -1,0 +1,40 @@
+# 作用: 本仓库 main 分支收到 push 时,通过 repository_dispatch
+#       通知 EMU-Stu/EMU-Stu-Site 主仓库的 deploy.yml 重新构建与部署。
+#
+# 鉴权: 复用主仓库 deploy.yml 同款 GitHub App 临时 token,不用 PAT。
+#   依赖的 secret(配在本仓库 Settings → Secrets and variables → Actions):
+#     APP_ID          -- GitHub App 的 App ID
+#     APP_PRIVATE_KEY -- GitHub App 的私钥 (PEM 全文)
+#   前置条件: 该 GitHub App 需对 EMU-Stu/EMU-Stu-Site 有访问权,
+#            且 App 权限包含 Contents: Read and write
+#            (repository_dispatch 接口要求 contents 写权限)。
+
+name: Notify main site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 用 GitHub App 生成一个仅针对主仓库、仅含 contents:write 的临时 token
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: EMU-Stu
+          repositories: EMU-Stu-Site
+          permission-contents: write
+
+      # 2. 携带该 token 向主仓库派发 docs-updated 事件,触发 deploy.yml
+      - name: Dispatch docs-updated event to main repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          repository: EMU-Stu/EMU-Stu-Site
+          event-type: docs-updated
