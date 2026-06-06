@@ -2,6 +2,7 @@
 excerpt: "EMU-Stu 官网首页统计近一周新增代码这行小字，背后其实有一套完整的自动化流水线。从每天凌晨自动跑脚本，到前端拿到数据展示出来，中间涉及 GitHub Actions、Python 脚本、独立数据分支和 jsDelivr CDN。"
 category: "技术分享"
 author: "何之洲"
+labs: [IOT-Lab]
 date: "2026-05-27"
 ---
 
