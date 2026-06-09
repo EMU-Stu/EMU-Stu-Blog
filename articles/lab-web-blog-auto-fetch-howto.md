@@ -1,5 +1,5 @@
 ---
-title: 实验室站点如何从 EMU-Stu-Blog 自动拉取博客
+title: 物联网实验室站点如何从 EMU-Stu-Blog 自动拉取博客
 excerpt: "IoT-lab-web 采用「内容仓库 + 展示仓库」分离架构：build 前 git clone 博客内容，按 frontmatter 的 labs 字段过滤本实验室文章，并处理 Next.js 静态导出与 GitHub Pages 子路径下的图片路径。"
 category: 技术分享
 author: 蔡明思
@@ -7,7 +7,7 @@ labs: [IoT-Lab]
 date: 2026-06-08
 ---
 
-# 实验室站点如何从 EMU-Stu-Blog 自动拉取博客
+# 物联网实验室站点如何从 EMU-Stu-Blog 自动拉取博客
 
 EMU-Stu 组织里，博客文章统一存放在 [EMU-Stu-Blog](https://github.com/EMU-Stu/EMU-Stu-Blog) 内容仓库；主站 [EMU-Stu-Site](https://github.com/EMU-Stu/EMU-Stu-Site) 在 build 时拉取全部文章展示。各实验室还有独立门户站（如 [IoT-lab-web](https://github.com/EMU-Stu/IOT-lab-web)），只需要展示**本实验室**的文章。
 
