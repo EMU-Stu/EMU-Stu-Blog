@@ -38,7 +38,7 @@ flowchart LR
 |------|------|
 | **EMU-Stu-Blog** | 唯一内容源，Markdown + 图片 |
 | **EMU-Stu-Site** | 主站，展示全部文章（Vite） |
-| **IoT-lab-web** | 实验室门户，只展示 `labs: [IoT-Lab]` 的文章（Next.js） |
+| **IoT-lab-web** | 物联网实验室门户，只展示 `labs: [IoT-Lab]` 的文章（Next.js） |
 
 **为什么不从 Site 读，而直接从 Blog 读？** Site 的 `frontend/docs/` 是 gitignore 的临时目录，不在仓库里；两个展示站应共享同一份内容源，各自做过滤。
 
