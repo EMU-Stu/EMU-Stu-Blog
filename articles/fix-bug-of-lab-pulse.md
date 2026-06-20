@@ -1,12 +1,10 @@
 
-
 ---
-title: "复盘：GitHub Pages 部署 Next.js 静态站点，热力图 404 蒸发事件"
-date: "2026-06-19"
-author: "Mingsi Cai"
-tags: ["iot-lab", "Next.js", "前端工程化", "踩坑记录"]
-excerpt: "为什么本地跑得贼溜的网页，打包到远端子路径后热力图就挂了？顺着代码摸过去，发现是编译期文本替换和浏览器运行时把变量给‘蒸发’了。记录一下这个经典的跨界大坑。"
-
+excerpt: "复盘：GitHub Pages 部署 Next.js 静态站点，热力图 404 蒸发事件"
+category: "技术分享"
+author: "蔡明思"
+labs: [IOT-Lab]
+date: "2026-06-20"
 ---
 
 之前在做物联网实验室网站 `lab-web` 的全景热力图时，遇到了一个特玄学的 Bug：
