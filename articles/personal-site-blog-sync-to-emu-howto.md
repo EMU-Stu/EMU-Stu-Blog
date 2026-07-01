@@ -8,7 +8,7 @@ date: "2026-06-29"
 
 # 个人站博客如何自动同步到 EMU-Stu-Blog
 
-在 [上一篇文章](/blog/lab-web-blog-auto-fetch-howto) 里，IoT-lab-web 的做法是 **build 前从 EMU-Stu-Blog 拉文章**。个人站 [karicms.github.io](https://karicms.github.io/) 我把方向反过来了：
+在 [上一篇文章](/article?slug=lab-web-blog-auto-fetch-howto) 里，IoT-lab-web 的做法是 **build 前从 EMU-Stu-Blog 拉文章**。个人站 [karicms.github.io](https://karicms.github.io/) 我把方向反过来了：
 
 - **写作入口只有一个**：`content/blog/articles/`
 - frontmatter **没有 `labs`** → 只出现在个人站
@@ -78,13 +78,21 @@ date: 2026-06-20
 
 脚本用 `gray-matter` 解析 frontmatter，只有 `labs` 非空数组的文章才进入同步队列。图片引用统一写 `./images/xxx.png`，脚本会从 `content/blog/images/` 或 `public/blog-images/` 解析源文件。
 
+**站内文章互链**：写作时统一写 `[标题](/article?slug=slug)`。同步到 EMU 时脚本会改成 `](/article?slug=slug)`；各站 `lib/blog.ts`（或 EMU 主站 `article.ts`）在渲染时再转成本站路由，三站都能点开。
+
+| 站点 | 文章 URL |
+|------|----------|
+| karicms.github.io | `/blog/{slug}` |
+| EMU 主站 | `/article?slug={slug}` |
+| IOT-lab-web | `/IOT-lab-web/blog/{slug}` |
+
 ## 脚本四阶段
 
 `sync-to-emu-blog.mjs` 可以拆成四步理解。
 
 ### 1. collect：筛 labs + 写影子目录
 
-扫描 `content/blog/articles/*.md`，带 `labs` 的复制到临时目录 `content/.emu-blog-sync/articles/`，图片复制到 `.emu-blog-sync/articles/images/`。
+扫描 `content/blog/articles/*.md`，带 `labs` 的复制到临时目录 `content/.emu-blog-sync/articles/`，图片复制到 `.emu-blog-sync/articles/images/`。复制正文时会将 `](/article?slug=slug)` 改写为 EMU 主站格式 `](/article?slug=slug)`。
 
 影子目录每次运行前清空重建，**不提交进 git**（已写进 `.gitignore`）。
 
