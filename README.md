@@ -1,6 +1,6 @@
-# EMU-Stu-Blog
+# UEM-Stu-Blog
 
-本仓库是 [EMU-Stu 官网](https://emu-stu.github.io/blog) 的**博客文章**内容仓库，欢迎你的投稿！
+本仓库是 [UEM-Stu 官网](https://uem-stu.github.io/blog) 的**博客文章**内容仓库，欢迎你的投稿！
 
 无论是日常开发中折腾出的实战记录、比赛科研的避坑指南，还是对开源技术的深度探索，都欢迎你来分享。PR 合并后，文章会在几分钟内自动部署到官网。
 
@@ -22,8 +22,8 @@
 1. 点击右上角 **Fork**，将本仓库 Fork 到你自己的 GitHub 账号下。
 2. Clone 到本地：
    ```bash
-   git clone https://github.com/<你的用户名>/EMU-Stu-Blog.git
-   cd EMU-Stu-Blog
+   git clone https://github.com/<你的用户名>/UEM-Stu-Blog.git
+   cd UEM-Stu-Blog
    ```
 3. 基于 `main` 分支创建新分支，分支名建议用文章 slug：
    ```bash
@@ -85,7 +85,7 @@ date: 2026-06-06
 
 4. 在 PR 描述中简单说明文章内容，方便维护者快速了解。
 
-5. 等待维护者 Review 并合并。合并后 GitHub Action 会自动触发主站重新构建，**约 1~3 分钟**后即可在 [EMU-Stu 官网博客](https://emu-stu.github.io/blog) 看到你的文章。
+5. 等待维护者 Review 并合并。合并后 GitHub Action 会自动触发主站重新构建，**约 1~3 分钟**后即可在 [UEM-Stu 官网博客](https://uem-stu.github.io/blog) 看到你的文章。
 
 ## 注意事项
 
@@ -95,4 +95,4 @@ date: 2026-06-06
 
 ## 本地预览（可选）
 
-如果你想在本地实时预览文章效果，可以按照 [EMU-Stu-Site](https://github.com/EMU-Stu/EMU-Stu-Site) 的说明启动本地开发服务器，它会自动拉取本仓库最新内容进行渲染。
+如果你想在本地实时预览文章效果，可以按照 [UEM-Stu-Site](https://github.com/UEM-Stu/UEM-Stu-Site) 的说明启动本地开发服务器，它会自动拉取本仓库最新内容进行渲染。

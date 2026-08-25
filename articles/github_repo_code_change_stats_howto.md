@@ -1,5 +1,5 @@
 ---
-excerpt: "EMU-Stu 官网首页统计近一周新增代码这行小字，背后其实有一套完整的自动化流水线。从每天凌晨自动跑脚本，到前端拿到数据展示出来，中间涉及 GitHub Actions、Python 脚本、独立数据分支和 jsDelivr CDN。"
+excerpt: "UEM-Stu 官网首页统计近一周新增代码这行小字，背后其实有一套完整的自动化流水线。从每天凌晨自动跑脚本，到前端拿到数据展示出来，中间涉及 GitHub Actions、Python 脚本、独立数据分支和 jsDelivr CDN。"
 category: "技术分享"
 author: "何之洲"
 labs: [IOT-Lab]
@@ -8,7 +8,7 @@ date: "2026-05-27"
 
 # Github 仓库如何统计代码变更行数
 
-EMU-Stu 官网首页上「近一周新增代码 +XXXX 行」这行小字，背后其实有一套完整的自动化流水线。从每天凌晨自动跑脚本，到前端拿到数据展示出来，中间涉及 GitHub Actions、Python 脚本、独立数据分支和 jsDelivr CDN。这篇文章把整条链路拆开讲一遍。
+UEM-Stu 官网首页上「近一周新增代码 +XXXX 行」这行小字，背后其实有一套完整的自动化流水线。从每天凌晨自动跑脚本，到前端拿到数据展示出来，中间涉及 GitHub Actions、Python 脚本、独立数据分支和 jsDelivr CDN。这篇文章把整条链路拆开讲一遍。
 
 ![+N行?](images/stats-inline.png)
 
@@ -66,7 +66,7 @@ GitHub 的 REST API 提供了仓库级别的对比接口。给定两个 commit S
 
 如果你是个人账号下的仓库，可以直接使用[个人 PAT](https://github.com/settings/personal-access-tokens)。
 
-由于 EMU-Stu 是一个组织，使用个人 PAT 来访问组织下的仓库不太合理。所以，这里是通过给组织添加一个 Github APP，然后使用 APP 生成临时 token。具体使用的是：[actions/create-github-app-token](https://github.com/actions/create-github-app-token) 这个 action。
+由于 UEM-Stu 是一个组织，使用个人 PAT 来访问组织下的仓库不太合理。所以，这里是通过给组织添加一个 Github APP，然后使用 APP 生成临时 token。具体使用的是：[actions/create-github-app-token](https://github.com/actions/create-github-app-token) 这个 action。
 
 ## 每天自动运行
 
@@ -95,7 +95,7 @@ Github Actions 的步骤上面时序图已经画得很清楚了，这里不再�
   "total_additions": 1523,
   "total_deletions": 432,
   "repos": [
-    { "name": "EMU-Stu-Site", "additions": 800, "deletions": 200 },
+    { "name": "UEM-Stu-Site", "additions": 800, "deletions": 200 },
     { "name": "IoT-lab-web", "additions": 723, "deletions": 232 }
   ]
 }
@@ -109,10 +109,10 @@ Github Actions 的步骤上面时序图已经画得很清楚了，这里不再�
 
 ## 前端怎么展示
 
-前端组件 `emu-projects` 在挂载时调用 `loadCommitStats()`，从 jsDelivr CDN 拉 `stats.json`：
+前端组件 `uem-projects` 在挂载时调用 `loadCommitStats()`，从 jsDelivr CDN 拉 `stats.json`：
 
 ```
-https://cdn.jsdelivr.net/gh/EMU-Stu/EMU-Stu-Site@stats-data/stats.json
+https://cdn.jsdelivr.net/gh/UEM-Stu/UEM-Stu-Site@stats-data/stats.json
 ```
 
 拿到数据后，按北京时间算出最近 7 天的日期列表，过滤出这 7 天的记录，把 `total_additions` 和 `total_deletions` 分别求和。
