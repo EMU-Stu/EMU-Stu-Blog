@@ -6,23 +6,23 @@ labs: [IOT-Lab]
 date: "2026-06-29"
 ---
 
-# 个人站博客如何自动同步到 EMU-Stu-Blog
+# 个人站博客如何自动同步到 UEM-Stu-Blog
 
-在 [上一篇文章](/article?slug=lab-web-blog-auto-fetch-howto) 里，IoT-lab-web 的做法是 **build 前从 EMU-Stu-Blog 拉文章**。个人站 [karicms.github.io](https://karicms.github.io/) 我把方向反过来了：
+在 [上一篇文章](/article?slug=lab-web-blog-auto-fetch-howto) 里，IoT-lab-web 的做法是 **build 前从 UEM-Stu-Blog 拉文章**。个人站 [karicms.github.io](https://karicms.github.io/) 我把方向反过来了：
 
 - **写作入口只有一个**：`content/blog/articles/`
 - frontmatter **没有 `labs`** → 只出现在个人站
-- frontmatter **有 `labs: [IoT-Lab]`** → 个人站展示 + 自动同步到 EMU-Stu-Blog → lab-web 按 `labs` 过滤后展示
+- frontmatter **有 `labs: [IoT-Lab]`** → 个人站展示 + 自动同步到 UEM-Stu-Blog → lab-web 按 `labs` 过滤后展示
 
-这篇文章复盘 `scripts/sync-to-emu-blog.mjs` 的实现：本地筛选、内容 hash 对比、推 `karicms` 分支、自动开 PR。
+这篇文章复盘 `scripts/sync-to-uem-blog.mjs` 的实现：本地筛选、内容 hash 对比、推 `karicms` 分支、自动开 PR。
 
 ## 整体链路
 
 ```mermaid
 flowchart LR
   Write["karicms.github.io\ncontent/blog/"]
-  Script["sync-to-emu-blog.mjs"]
-  PR["EMU-Stu-Blog\nkaricms → main PR"]
+  Script["sync-to-uem-blog.mjs"]
+  PR["UEM-Stu-Blog\nkaricms → main PR"]
   Notify["notify-main-site.yml"]
   Lab["IOT-lab-web 重建"]
 
@@ -37,7 +37,7 @@ flowchart LR
 | 方向 | 仓库 | 触发 |
 |------|------|------|
 | 个人站 → EMU | `karicms.github.io` | `content/blog/**` push |
-| EMU → lab-web | `EMU-Stu-Blog` main merge | 已有 `repository_dispatch` |
+| EMU → lab-web | `UEM-Stu-Blog` main merge | 已有 `repository_dispatch` |
 
 个人站 **不需要** 在 EMU 的 deploy 里配置「通知个人站」；你是源头，EMU 是下游。
 
@@ -88,17 +88,17 @@ date: 2026-06-20
 
 ## 脚本四阶段
 
-`sync-to-emu-blog.mjs` 可以拆成四步理解。
+`sync-to-uem-blog.mjs` 可以拆成四步理解。
 
 ### 1. collect：筛 labs + 写影子目录
 
-扫描 `content/blog/articles/*.md`，带 `labs` 的复制到临时目录 `content/.emu-blog-sync/articles/`，图片复制到 `.emu-blog-sync/articles/images/`。复制正文时会将 `](/article?slug=slug)` 改写为 EMU 主站格式 `](/article?slug=slug)`。
+扫描 `content/blog/articles/*.md`，带 `labs` 的复制到临时目录 `content/.uem-blog-sync/articles/`，图片复制到 `.uem-blog-sync/articles/images/`。复制正文时会将 `](/article?slug=slug)` 改写为 EMU 主站格式 `](/article?slug=slug)`。
 
 影子目录每次运行前清空重建，**不提交进 git**（已写进 `.gitignore`）。
 
 ### 2. diff：和 EMU main 比 hash
 
-浅克隆 `EMU-Stu/EMU-Stu-Blog` 到 `content/emu-blog-sync/`，逐篇对比 MD5：
+浅克隆 `UEM-Stu/UEM-Stu-Blog` 到 `content/uem-blog-sync/`，逐篇对比 MD5：
 
 | 状态 | 条件 |
 |------|------|
@@ -126,26 +126,26 @@ git add / commit / push -f origin karicms
 CI 里 clone 需要 token，脚本读取环境变量：
 
 ```javascript
-const token = process.env.EMU_SYNC_TOKEN ?? process.env.GH_TOKEN;
+const token = process.env.UEM_SYNC_TOKEN ?? process.env.GH_TOKEN;
 const EMU_REPO_URL = token
-  ? `https://x-access-token:${token}@github.com/EMU-Stu/EMU-Stu-Blog.git`
-  : `https://github.com/EMU-Stu/EMU-Stu-Blog.git';
+  ? `https://x-access-token:${token}@github.com/UEM-Stu/UEM-Stu-Blog.git`
+  : `https://github.com/UEM-Stu/UEM-Stu-Blog.git';
 ```
 
 ### 4. PR：`gh` 查重后创建
 
 ```bash
-gh pr list --repo EMU-Stu/EMU-Stu-Blog --head karicms --base main --state open
+gh pr list --repo UEM-Stu/UEM-Stu-Blog --head karicms --base main --state open
 ```
 
 - 已有 open PR → push 后 diff 自动更新，不重复建
 - 没有 → `gh pr create --base main --head karicms`
 
-本地调试需 `gh auth login`；CI 里传 `GH_TOKEN` / `EMU_SYNC_TOKEN` 即可。
+本地调试需 `gh auth login`；CI 里传 `GH_TOKEN` / `UEM_SYNC_TOKEN` 即可。
 
 ## GitHub Actions
 
-`.github/workflows/sync-emu-blog.yml`：
+`.github/workflows/sync-uem-blog.yml`：
 
 ```yaml
 on:
@@ -161,17 +161,17 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo apt-get install -y gh
       - env:
-          GH_TOKEN: ${{ secrets.EMU_SYNC_TOKEN }}
+          GH_TOKEN: ${{ secrets.UEM_SYNC_TOKEN }}
         run: gh auth setup-git
       - env:
-          EMU_SYNC_TOKEN: ${{ secrets.EMU_SYNC_TOKEN }}
-          GH_TOKEN: ${{ secrets.EMU_SYNC_TOKEN }}
-        run: node scripts/sync-to-emu-blog.mjs
+          UEM_SYNC_TOKEN: ${{ secrets.UEM_SYNC_TOKEN }}
+          GH_TOKEN: ${{ secrets.UEM_SYNC_TOKEN }}
+        run: node scripts/sync-to-uem-blog.mjs
 ```
 
 注意：
 
-- `GITHUB_TOKEN` **只能操作当前仓库**，push 到 EMU-Stu-Blog 必须单独配 **`EMU_SYNC_TOKEN`**（PAT，需 Contents + Pull requests 写权限）
+- `GITHUB_TOKEN` **只能操作当前仓库**，push 到 UEM-Stu-Blog 必须单独配 **`UEM_SYNC_TOKEN`**（PAT，需 Contents + Pull requests 写权限）
 - 改脚本本身 **不会** 触发 sync（paths 只监听 `content/blog/**`），方便先把基础设施 merge 再改文章
 
 与个人站 deploy 并行、互不影响：
@@ -179,7 +179,7 @@ jobs:
 ```text
 push main
   ├─ deploy.yml         → karicms.github.io 静态站
-  └─ sync-emu-blog.yml  → EMU PR（仅 content/blog 变更时）
+  └─ sync-uem-blog.yml  → EMU PR（仅 content/blog 变更时）
 ```
 
 ## 踩坑记录
@@ -206,7 +206,7 @@ execFileSync('git', ['checkout', '-B', 'karicms'], gitOption);
 
 **4. `gh` 与 `git push` 是两套鉴权**
 
-- `git push`：`EMU_SYNC_TOKEN` 写入 clone URL，或本地 `gh auth setup-git`
+- `git push`：`UEM_SYNC_TOKEN` 写入 clone URL，或本地 `gh auth setup-git`
 - `gh pr create`：读 `GH_TOKEN` 环境变量
 
 **5. PR 变量名 typo**
@@ -218,7 +218,7 @@ execFileSync('git', ['checkout', '-B', 'karicms'], gitOption);
 | 仓库 | 角色 |
 |------|------|
 | **karicms.github.io** | 写作源头，本地 Markdown |
-| **EMU-Stu-Blog** | 组织级内容仓，PR 合入 main |
+| **UEM-Stu-Blog** | 组织级内容仓，PR 合入 main |
 | **IOT-lab-web** | build 时 pull Blog，按 `labs: [IoT-Lab]` 过滤 |
 
 个人文章与实验室文章**同一套 frontmatter 规范**，只靠 `labs` 字段分流。merge PR 后，EMU 现有的 `notify-main-site.yml` 会通知 lab-web 重建，无需额外配置。
@@ -228,6 +228,6 @@ execFileSync('git', ['checkout', '-B', 'karicms'], gitOption);
 - 个人站 = **唯一写作入口**，不再从 EMU 拉博客
 - `labs` = 同步开关 + lab-web 过滤条件
 - 脚本 = collect → hash diff → push `karicms` → 自动 PR
-- 生产依赖 `EMU_SYNC_TOKEN` + `sync-emu-blog.yml`
+- 生产依赖 `UEM_SYNC_TOKEN` + `sync-uem-blog.yml`
 
 完整脚本见 [karicms.github.io/scripts/sync-to-emu-blog.mjs](https://github.com/karicms/karicms.github.io/blob/main/scripts/sync-to-emu-blog.mjs)。

@@ -9,7 +9,7 @@ date: 2026-06-19
 
 # 实验室脉搏：用 GitHub 风格热力图展示实验室活跃度
 
-在 [上一篇文章](/article?slug=lab-web-blog-auto-fetch-howto) 里，我们已经让 IoT-lab-web 在 build 时自动从 [EMU-Stu-Blog](https://github.com/EMU-Stu/EMU-Stu-Blog) 拉取带 `labs: [IoT-Lab]` 的技术文章，并在 `/blog` 路由展示。
+在 [上一篇文章](/article?slug=lab-web-blog-auto-fetch-howto) 里，我们已经让 IoT-lab-web 在 build 时自动从 [UEM-Stu-Blog](https://github.com/UEM-Stu/UEM-Stu-Blog) 拉取带 `labs: [IoT-Lab]` 的技术文章，并在 `/blog` 路由展示。
 
 接下来要做的是：**把「写代码」和「写博客」这两类活跃行为，汇总成一张 GitHub 风格的热力图**，挂在实验室首页，一眼看出实验室最近忙不忙。
 
@@ -19,7 +19,7 @@ date: 2026-06-19
 
 | 目标 | 做法 |
 |------|------|
-| 不依赖主站 CDN | 不用 EMU-Stu-Site 的 `stats.json`，数据在 build 前本地生成 |
+| 不依赖主站 CDN | 不用 UEM-Stu-Site 的 `stats.json`，数据在 build 前本地生成 |
 | 适配静态导出 | `output: "export"`，不在 build 时调 GitHub API |
 | 与博客链路衔接 | 博客数据来自 `fetch-blog` 拉下来的 `content/blog/articles/` |
 | 只统计本实验室 | 博客按 frontmatter 的 `labs` 过滤，与 `lib/blog.ts` 一致 |
@@ -27,7 +27,7 @@ date: 2026-06-19
 统计两类数据源：
 
 1. **本站 Git 提交**：`IOT-lab-web` 仓库的 `git log`（按 commit 日期计数）
-2. **实验室博客发文**：EMU-Stu-Blog 里 `labs` 含 `IoT-Lab` 的文章（按 frontmatter 的 `date` 计数）
+2. **实验室博客发文**：UEM-Stu-Blog 里 `labs` 含 `IoT-Lab` 的文章（按 frontmatter 的 `date` 计数）
 
 ## 整体链路
 
@@ -90,7 +90,7 @@ npm run dev / build
     ↓
 predev / prebuild
     ↓
-① fetch-blog.mjs   →  clone EMU-Stu-Blog 到 content/blog/
+① fetch-blog.mjs   →  clone UEM-Stu-Blog 到 content/blog/
     ↓
 ② generate-stats.mjs → 读 git log + 博客 → 写 public/lab-stats.json
     ↓
@@ -178,7 +178,7 @@ for (const file of fs.readdirSync(articlesDir).filter((f) => f.endsWith(".md")))
 
 与 `lib/blog.ts` 使用相同的 `labs` 过滤逻辑：**只有会出现在 `/blog` 列表里的文章，才会计入热力图**。
 
-投稿时在 EMU-Stu-Blog 写好 frontmatter 即可：
+投稿时在 UEM-Stu-Blog 写好 frontmatter 即可：
 
 ```yaml
 ---
@@ -283,7 +283,7 @@ level 4: score > 6
 
 ## 与主站热力图的对比
 
-| | EMU-Stu-Site 主站 | IoT-lab-web 实验室脉搏 |
+| | UEM-Stu-Site 主站 | IoT-lab-web 实验室脉搏 |
 |---|-------------------|------------------------|
 | 数据来源 | 组织 `stats-data/stats.json`（CDN） | 本地 build 生成 `lab-stats.json` |
 | 统计口径 | 全组织代码变更行数 | 本站 commit 次数 + 本实验室博客篇数 |
@@ -295,7 +295,7 @@ level 4: score > 6
 ## 部署与自动更新
 
 1. **本站有 commit** → push `IOT-lab-web` → CI rebuild → `git log` 更新 → 热力图变绿
-2. **Blog 有新文** → EMU-Stu-Blog 合并 → `repository_dispatch` 触发 lab-web rebuild → `fetch-blog` 拉新文章 → `generate-stats` 计入 → 对应日期变蓝
+2. **Blog 有新文** → UEM-Stu-Blog 合并 → `repository_dispatch` 触发 lab-web rebuild → `fetch-blog` 拉新文章 → `generate-stats` 计入 → 对应日期变蓝
 
 Blog 仓库的 workflow 需同时 notify 主站和 `IOT-lab-web`（`docs-updated` 事件），与博客展示链路共用同一套触发机制。
 
